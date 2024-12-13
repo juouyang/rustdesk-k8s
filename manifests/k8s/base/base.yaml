@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustdesk-hbbs
+  namespace: rustdesk
+  labels:
+    app: rustdesk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rustdesk
+      component: hbbs
+  template:
+    metadata:
+      labels:
+        app: rustdesk
+        component: hbbs
+    spec:
+      containers:
+        - name: hbbs
+          image: rustdesk/rustdesk-server
+          args: ["hbbs"]
+          ports:
+            - containerPort: 21115
+              protocol: TCP
+            - containerPort: 21116
+              protocol: TCP
+            - containerPort: 21116
+              protocol: UDP
+            - containerPort: 21118
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /root
+              name: hbbs-storage
+      volumes:
+        - name: hbbs-storage
+          emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustdesk-hbbr
+  namespace: rustdesk
+  labels:
+    app: rustdesk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rustdesk
+      component: hbbr
+  template:
+    metadata:
+      labels:
+        app: rustdesk
+        component: hbbr
+    spec:
+      containers:
+        - name: hbbr
+          image: rustdesk/rustdesk-server
+          args: ["hbbr"]
+          ports:
+            - containerPort: 21117
+              protocol: TCP
+            - containerPort: 21119
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /root
+              name: hbbr-storage
+      volumes:
+        - name: hbbr-storage
+          emptyDir: {}
